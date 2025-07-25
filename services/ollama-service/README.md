@@ -17,3 +17,5 @@ We are using ollama official library and its python API to interact with the Oll
 - [https://github.com/ollama/ollama-python](https://github.com/ollama/ollama-python)
 
 We are not using the official docker image for Ollama to allow for more flexibility in configuration and to avoid issues with the official image.
+
+We use debian as the base image for systemd support and to ensure compatibility with the Ollama service.

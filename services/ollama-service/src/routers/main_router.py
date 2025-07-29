@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .ollama_agent import query_router
+from .ollama_router import query_router
 
 app = FastAPI()
 

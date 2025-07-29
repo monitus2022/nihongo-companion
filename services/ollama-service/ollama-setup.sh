@@ -32,4 +32,4 @@ ollama run jp-gemma3
 echo "Ollama setup complete."
 # ollama show --modelfile jp-gemma3 # Uncomment to show model details
 
-exec python3 main.py  # Start the FastAPI application
+exec python3 -m main  # Start the FastAPI application

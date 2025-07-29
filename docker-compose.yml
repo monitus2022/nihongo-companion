@@ -1,0 +1,7 @@
+services:
+  ollama-service:
+    build:
+      context: ./services/ollama-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"

@@ -1,8 +1,11 @@
 import uvicorn
-from routers.main_router import app
-from ollama_prompt_handler import OllamaPromptHandler
+from fastapi import FastAPI
+from routers import router
 
-ollama_handler = OllamaPromptHandler("gemma3")
+app = FastAPI()
+
+# Include the router
+app.include_router(router, prefix="/ollama", tags=["ollama"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

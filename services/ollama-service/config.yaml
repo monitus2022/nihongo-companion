@@ -1,0 +1,43 @@
+# Nihongo Companion - Ollama Service Configuration
+
+# Default prompts
+prompts:
+  default_admin: |
+    You are a Japanese teacher having a conversation with a student. 
+    Respond entirely in Japanese and do not use any romaji.
+    Do not explain your responses in English.
+  default_user: "こんにちは！"
+
+# Model configuration
+models:
+  default: "gemma3"
+  available:
+    - "gemma3"
+
+# API configuration
+api:
+  title: "Nihongo Companion - Ollama Service"
+  description: "Japanese language learning service powered by Ollama"
+  version: "1.0.0"
+
+# Service configuration
+service:
+  name: "ollama-service"
+  host: "0.0.0.0"
+  port: 8000
+
+# Ollama configuration
+ollama:
+  host: "localhost"
+  port: 11434
+  timeout: 30  # seconds
+
+# Response configuration
+response:
+  max_length: 1000
+  timeout: 30  # seconds
+
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

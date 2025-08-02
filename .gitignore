@@ -1,0 +1,5 @@
+env/
+testing.*
+__pycache__/
+node_modules/
+.gradio/

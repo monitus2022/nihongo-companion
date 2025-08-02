@@ -20,16 +20,23 @@ done
 
 # Check if Ollama is running
 echo "Setting up Ollama models..."
-# Check if Modelfile exists before creating the model
-if [ ! -f ./Modelfile ]; then
-    echo "Error: Modelfile not found in the current directory."
-    exit 1
-fi
-# Use Modelfile to initialize models
-ollama create jp-gemma3 -f ./Modelfile
-ollama run jp-gemma3
+# # Check if Modelfile exists before creating the model
+# if [ ! -f ./Modelfile ]; then
+#     echo "Error: Modelfile not found in the current directory."
+#     exit 1
+# fi
+# # Use Modelfile to initialize models
+# ollama create jp-gemma3 -f ./Modelfile
+# ollama run jp-gemma3
+ollama run gemma3
 
 echo "Ollama setup complete."
 # ollama show --modelfile jp-gemma3 # Uncomment to show model details
+
+# Test if Ollama is running using example prompt
+ollama run gemma3 --prompt "Hello, how are you?" || {
+    echo "Ollama is not responding to the example prompt."
+    exit 1
+}
 
 exec python3 -m main  # Start the FastAPI application

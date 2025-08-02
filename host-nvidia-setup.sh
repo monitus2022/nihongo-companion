@@ -1,3 +1,3 @@
 #!/bin/bash
 
-# Script to set up NVIDIA environment for Ollama
+# Future script to set up NVIDIA environment for Ollama

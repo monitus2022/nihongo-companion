@@ -1,12 +1,35 @@
-import uvicorn
-from fastapi import FastAPI
-from routers import router
+import gradio as gr
+from typing import Optional
+import requests
 
-app = FastAPI()
-
-# Include the router
-app.include_router(router, prefix="/ollama", tags=["ollama"])
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+def prompt_model(model_name, user_prompt, admin_prompt: Optional[str] = None)-> str:
+    """
+    Function to handle the model prompt.
     
+    Args:
+        model_name (str): The name of the model to use.
+        user_prompt (str): The user's prompt to the model.
+        admin_prompt (str): An optional admin prompt to guide the model's response.
+        
+    Returns:
+        str: The response from the model.
+    """
+
+    response = requests.post(
+        "http://localhost:8000/ollama/prompt",
+        json={
+            "model": model_name,
+            "user_prompt": user_prompt,
+            "admin_prompt": admin_prompt if admin_prompt else None,
+            "kwargs": {}
+        }
+    )
+    return response.json().get("message") if response.status_code == 200 else "Error: Unable to get response from model"
+
+demo = gr.Interface(
+    fn=prompt_model,
+    inputs=["text", "text", "text"],
+    outputs=["text"],
+)
+
+demo.launch(share=False)

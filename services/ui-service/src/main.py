@@ -1,6 +1,7 @@
 import gradio as gr
 from typing import Optional
 import requests
+from text_to_speech import TextToSpeechHandler
 
 def prompt_model(model_name, user_prompt, admin_prompt: Optional[str] = None)-> str:
     """
@@ -25,6 +26,10 @@ def prompt_model(model_name, user_prompt, admin_prompt: Optional[str] = None)-> 
         }
     )
     return response.json().get("message") if response.status_code == 200 else "Error: Unable to get response from model"
+
+tts = TextToSpeechHandler()
+tts.set_voice_model(voice_model_number=0)
+print(tts.list_styles())
 
 demo = gr.Interface(
     fn=prompt_model,

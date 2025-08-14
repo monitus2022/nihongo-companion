@@ -9,3 +9,6 @@ chmod +x download
 ./download -o ./src/voicevox/python --exclude c-api
 
 pip install -r requirements.txt
+
+# Remove downloaded file
+rm download

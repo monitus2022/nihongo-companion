@@ -14,12 +14,24 @@ class TextToSpeechHandler:
         acceleration_mode='AUTO',
         cpu_num_threads=4
     )
-        self.voice_model_number = 0
+    
+    def set_voice_model(self, voice_model_number: int):
+        """Set the voice model to use for synthesis.
+        Args:
+            voice_model_number (int): The index of the voice model to set.
+        """
+        self.voice_model_number = voice_model_number
         with VoiceModelFile.open(f'./src/voicevox/python/models/vvms/{self.voice_model_number}.vvm') as model:
             self.synthesizer.load_voice_model(model)
-            
+        print(f"Voice model set to {self.voice_model_number}.")
+        
+    def list_styles(self):
+        """List available styles for the current voice model."""
+        styles = self.synthesizer.metas()
+        return [style.name for style in styles]
+    
     def synthesize(self, text: str, style_id: int = 0) -> bytes:
-        """        Synthesize speech from text using the loaded voice model and style ID.
+        """Synthesize speech from text using the loaded voice model and style ID.
         Args:
             text (str): The text to synthesize.
             style_id (int): The style ID for the synthesis.
@@ -38,23 +50,7 @@ class TextToSpeechHandler:
             style_id=style_id
         )
         return wav
-    
-    def list_styles(self):
-        """List available styles for the current voice model."""
-        styles = self.synthesizer.metas()
-        return [style.name for style in styles]
-    
-    def set_voice_model(self, voice_model_number: int):
-        """Set the voice model to use for synthesis.
-        
-        Args:
-            voice_model_number (int): The index of the voice model to set.
-        """
-        self.voice_model_number = voice_model_number
-        with VoiceModelFile.open(f'./src/voicevox/python/models/vvms/{self.voice_model_number}.vvm') as model:
-            self.synthesizer.load_voice_model(model)
-        print(f"Voice model set to {self.voice_model_number}.")
-    
+
     def write_wav_to_file(self, wav: bytes, filename: str):
         """Write the synthesized WAV data to a file.
         

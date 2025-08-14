@@ -14,23 +14,53 @@ class TextToSpeechHandler:
         acceleration_mode='AUTO',
         cpu_num_threads=4
     )
-    
-    def set_voice_model(self, voice_model_number: int):
+        self.voice_model_id = None
+        self.voice_style_id = None
+        self.audio_output = None
+
+    def set_voice_model(self, voice_model_id: int):
         """Set the voice model to use for synthesis.
         Args:
-            voice_model_number (int): The index of the voice model to set.
+            voice_model_id (int): The index of the voice model to set.
         """
-        self.voice_model_number = voice_model_number
-        with VoiceModelFile.open(f'./src/voicevox/python/models/vvms/{self.voice_model_number}.vvm') as model:
+        self.voice_model_id = voice_model_id
+        with VoiceModelFile.open(f'./src/voicevox/python/models/vvms/{self.voice_model_id}.vvm') as model:
             self.synthesizer.load_voice_model(model)
-        print(f"Voice model set to {self.voice_model_number}.")
+        print(f"Voice model set to {self.voice_model_id}.")
         
     def list_styles(self):
-        """List available styles for the current voice model."""
-        styles = self.synthesizer.metas()
-        return [style.name for style in styles]
+        """List available styles for the current voice model.
+        Meta example:
+        CharacterMeta(name='四国めたん',
+               styles=[StyleMeta(name='ノーマル', id=2, type='talk', order=0),
+                       StyleMeta(name='あまあま', id=0, type='talk', order=1),
+                       StyleMeta(name='ツンツン', id=6, type='talk', order=2),
+                       StyleMeta(name='セクシー', id=4, type='talk', order=3)],
+               speaker_uuid='7ffcb7ce-00ec-4bdc-82cd-45a8889e43ff',
+               version='0.1.0',
+               order=0)
+        """
+        style_metas = self.synthesizer.metas()
+        style_id_info = []
+        for style in style_metas:
+            voice_actor_name = style.name
+            for sub_style_meta in style.styles:
+                style_id_info.append({
+                    "id": sub_style_meta.id,
+                    "actor_name": voice_actor_name,
+                    "style_name": sub_style_meta.name
+                })
+        return style_id_info
     
-    def synthesize(self, text: str, style_id: int = 0) -> bytes:
+    def set_voice_style(self, voice_style_id):
+        """Set the voice style for synthesis.
+        Args:
+            style_id (int): The ID of the style to set.
+        """
+        self.voice_style_id = voice_style_id
+        print(f"Voice style set to {self.voice_style_id}.")
+
+    def synthesize(self, text: str) -> bytes:
         """Synthesize speech from text using the loaded voice model and style ID.
         Args:
             text (str): The text to synthesize.
@@ -38,29 +68,29 @@ class TextToSpeechHandler:
         Returns:
             bytes: The synthesized audio data in WAV format.
         """
-        styles = self.synthesizer.metas()
-        if style_id < 0 or style_id >= len(styles):
-            raise ValueError(f"Invalid style_id: {style_id}. Must be between 0 and {len(styles) - 1}.")
+        print(f"voice_model_id: {self.voice_model_id}, voice_style_id: {self.voice_style_id}")
+        if self.voice_style_id is None or self.voice_model_id is None:
+            raise ValueError("Voice model/style must be set before synthesis.")
         audio_query = self.synthesizer.create_audio_query(
             text,
-            style_id=style_id
+            style_id=self.voice_style_id
         )
         wav = self.synthesizer.synthesis(
             audio_query,
-            style_id=style_id
+            style_id=self.voice_style_id
         )
-        return wav
+        self.audio_output = wav
 
-    def write_wav_to_file(self, wav: bytes, filename: str):
+    def write_wav_to_file(self, filename: str):
         """Write the synthesized WAV data to a file.
         
         Args:
-            wav (bytes): The synthesized audio data in WAV format.
             filename (str): The name of the file to write the WAV data to.
         """
-        if not os.path.exists('../media'):
-            os.makedirs('../media')
-        with open(f"../media/{filename}", 'wb') as f:
-            f.write(wav)
+        if not os.path.exists('./media'):
+            os.makedirs('./media')
+        if not self.audio_output:
+            raise ValueError("No audio output available to write.")
+        with open(f"./media/{filename}", 'wb') as f:
+            f.write(self.audio_output)
         print(f"WAV data written to {filename}.")
-        

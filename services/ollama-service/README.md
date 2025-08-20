@@ -4,6 +4,16 @@ This service provides an interface to interact with the Ollama API, allowing use
 
 ## Installation
 
+Make sure you have ollama running in the background. For installation:
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+To start ollama in the background:
+```bash
+ollama serve
+```
+
 Locally create conda environment:
 
 ```bash
@@ -15,7 +25,3 @@ pip install -r requirements.txt
 We are using ollama official library and its python API to interact with the Ollama service. 
 - [https://ollama.com/search](https://ollama.com/search)
 - [https://github.com/ollama/ollama-python](https://github.com/ollama/ollama-python)
-
-We are not using the official docker image for Ollama to allow for more flexibility in configuration and to avoid issues with the official image.
-
-We use debian as the base image for systemd support and to ensure compatibility with the Ollama service.

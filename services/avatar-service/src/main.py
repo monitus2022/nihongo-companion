@@ -2,7 +2,7 @@ from ui import ChatInterface
 from config import config
 from utils import avatar_service_logger as logger
 
-def main():
+def main() -> None:
     logger.info("Starting Nihongo Companion - AI Japanese Tutor")
     
     # Create interface

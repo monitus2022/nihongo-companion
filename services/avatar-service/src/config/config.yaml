@@ -1,5 +1,3 @@
-# TODO: Add more configuration options instead of hard code
-
 # LLM Configuration
 llm:
   default_model: gemma3
@@ -18,6 +16,7 @@ prompts:
     Every answer must follow this rule.
   default_user: "こんにちは、元気ですか？"
 
+# Voicevox engine
 tts:
   onnxruntime_path: "./voicevox/python/onnxruntime/lib/libvoicevox_onnxruntime.so.1.17.3"
   synthesizer_path: "./voicevox/python/dict/open_jtalk_dic_utf_8-1.11"

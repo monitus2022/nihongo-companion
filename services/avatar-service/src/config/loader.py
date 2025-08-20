@@ -4,7 +4,7 @@ from typing import Dict, Any
 
 
 class Config:
-    """Configuration manager for the UI."""
+    """Configuration manager for the avatar service."""
 
     def __init__(self, config_path: str = "./config/config.yaml"):
         self.config_path = Path(config_path)

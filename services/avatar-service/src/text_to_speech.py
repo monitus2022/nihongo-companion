@@ -2,6 +2,7 @@ from voicevox_core.blocking import Onnxruntime, OpenJtalk, Synthesizer, VoiceMod
 import os
 import json
 from utils import file_name_to_id
+from config import config
 
 
 class TextToSpeechHandler:
@@ -12,12 +13,10 @@ class TextToSpeechHandler:
             load_voice_options (bool): Whether to load voice options during init
         """
         # Initialize VoiceVox components
-        self.onnxruntime_path = (
-            "./voicevox/python/onnxruntime/lib/libvoicevox_onnxruntime.so.1.17.3"
-        )
-        self.synthesizer_path = "./voicevox/python/dict/open_jtalk_dic_utf_8-1.11"
-        self.vvm_folder_path = "./voicevox/python/models/vvms"
-        self.wav_output_path = "output.wav"
+        self.onnxruntime_path = config.tts.get("onnxruntime_path")
+        self.synthesizer_path = config.tts.get("synthesizer_path")
+        self.vvm_folder_path = config.tts.get("vvm_folder_path")
+        self.wav_output_path = config.tts.get("wav_output_path")
 
         self.onnxruntime = Onnxruntime.load_once(filename=self.onnxruntime_path)
         self.synthesizer = Synthesizer(
@@ -34,16 +33,9 @@ class TextToSpeechHandler:
         self.create_voice_style_info()
 
     def list_styles(self, voice_model_id) -> list[dict[str, any]]:
-        """List available styles for the current voice model.
-        Meta example:
-        CharacterMeta(name='四国めたん',
-               styles=[StyleMeta(name='ノーマル', id=2, type='talk', order=0),
-                       StyleMeta(name='あまあま', id=0, type='talk', order=1),
-                       StyleMeta(name='ツンツン', id=6, type='talk', order=2),
-                       StyleMeta(name='セクシー', id=4, type='talk', order=3)],
-               speaker_uuid='7ffcb7ce-00ec-4bdc-82cd-45a8889e43ff',
-               version='0.1.0',
-               order=0)
+        """
+        List available styles for the current voice model.
+        Refer to schema.py for more details.
         """
         style_metas = self.synthesizer.metas()
         style_id_info = []
@@ -111,7 +103,6 @@ class TextToSpeechHandler:
                     "model_id": voice["model_id"],
                     "style_id": voice["style_id"],
                 }
-
         return organized_voices
 
     def create_voice_style_info(self) -> None:
@@ -119,7 +110,7 @@ class TextToSpeechHandler:
         actor_styles_map = self.fetch_all_available_styles()
 
         # Transform to UI-friendly structure
-        ui_structure = {
+        voice_style_info = {
             "actors": list(actor_styles_map.keys()),  # Simple list for first dropdown
             "actor_styles": {
                 actor: list(styles.keys())  # Simple list for second dropdown
@@ -130,10 +121,11 @@ class TextToSpeechHandler:
 
         # Save to JSON file for debugging purposes
         with open("voice_style_info.json", "w", encoding="utf-8") as json_file:
-            json.dump(ui_structure, json_file, ensure_ascii=False, indent=2)
+            json.dump(voice_style_info, json_file, ensure_ascii=False, indent=2)
 
         # Store the structure for loading model purpose
-        self.voice_style_info = ui_structure
+        self.voice_style_info = voice_style_info
+        self.style_lookup_info = voice_style_info.get("style_lookup", {})
 
     def generate_audio_output_given_voice_ids(self, voice_style_id: int, llm_response: str):
         """Generate audio output given a specific voice style ID"""
@@ -153,28 +145,35 @@ class TextToSpeechHandler:
             with open(self.wav_output_path, "wb") as wav_file:
                 wav_file.write(self.audio_output)
 
-    def create_wav_from_prompt(
+    def get_voice_id_from_names(self, voice_actor_name: str, voice_style_name: str) -> tuple[int, int]:
+        """
+        Get style_id from voice actor and style names.
+        """
+        if voice_actor_name not in self.style_lookup_info:
+            available_actors = list(self.style_lookup_info.keys())
+            raise ValueError(f"Voice actor '{voice_actor_name}' not found. Available: {available_actors}")
+
+        actor_styles = self.style_lookup_info[voice_actor_name]
+        if voice_style_name not in actor_styles:
+            available_styles = list(actor_styles.keys())
+            raise ValueError(f"Style '{voice_style_name}' not found for actor '{voice_actor_name}'. Available: {available_styles}")
+        
+        style_info = actor_styles[voice_style_name]
+        return style_info["style_id"]
+
+    def create_wav_from_llm_response(
         self,
         llm_response: str,
         voice_actor_name: str,
         voice_style_name: str,
     ) -> None:
         """
-        Create a WAV file from the given text prompt using the specified voice actor and style.
+        Create a WAV file from the given llm response using the specified voice actor and style.
         """
         # Find style id based on names
-        self.style_lookup_dict = self.voice_style_info.get("style_lookup", {})
-        style_info = self.style_lookup_dict.get(voice_actor_name, {}).get(
-            voice_style_name, {}
-        )
-        if not style_info:
-            print("Error: Unable to find style information")
-            return None
-
-        style_id = style_info.get("style_id", None)
-
-        if not style_id:
-            print("Error: Unable to find style ID")
+        style_id = self.get_voice_id_from_names(
+            voice_actor_name, voice_style_name)
+        if style_id is None:
             return None
 
         # Generate audio output

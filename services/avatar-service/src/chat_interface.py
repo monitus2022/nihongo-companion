@@ -33,7 +33,7 @@ class ChatInterface:
         )
 
         if llm_response:
-            self.tts.create_wav_from_prompt(
+            self.tts.create_wav_from_llm_response(
                 llm_response=llm_response,
                 voice_actor_name=voice_actor_name,
                 voice_style_name=voice_style_name,
@@ -44,7 +44,10 @@ class ChatInterface:
         return self.actor_style_dict.get(actor_name, [])
 
     def create_interface(self):
-        with gr.Blocks(title=config.ui.get("title", "")) as app:
+        with gr.Blocks(
+            title=config.ui.get("title", ""),
+            theme=gr.themes.Ocean(),    # https://www.gradio.app/guides/theming-guide
+            ) as app:
             gr.Markdown(config.ui.get("header", ""))
             
             # Usage instructions paragraph
@@ -70,13 +73,25 @@ class ChatInterface:
                         choices=initial_styles,
                         value=initial_style
                     )
-                    admin_prompt = gr.Textbox(label="Admin Prompt (Optional)", placeholder="Optional admin guidance, will replace default prompt")
-                    user_prompt = gr.Textbox(label="User Prompt", value=config.prompts.get("default_user", ""), placeholder="Enter your prompt here")
-                    submit_btn = gr.Button("Generate Response & Audio", variant="primary")
+                    admin_prompt = gr.Textbox(
+                        label="Admin Prompt (Optional)", 
+                        placeholder="Optional admin guidance, will replace default prompt"
+                        )
+                    user_prompt = gr.Textbox(
+                        label="User Prompt", 
+                        value=config.prompts.get("default_user", ""), 
+                        placeholder="Enter your prompt here"
+                        )
+                    submit_btn = gr.Button(
+                        "Generate Response & Audio", 
+                        variant="primary"
+                        )
                 
                 # Right column: output
                 with gr.Column():
-                    text_output = gr.Textbox(label="Model Response")
+                    text_output = gr.Textbox(
+                        label="Model Response"
+                        )
                     audio_output = gr.Audio(
                         label="Generated Speech", 
                         type="filepath",
@@ -94,7 +109,14 @@ class ChatInterface:
                 outputs=[voice_style]
             )
             
-            # Handle form submission
+            # Handle from pressing "enter" in User Prompt Box
+            user_prompt.submit(
+                fn=self.create_output_to_ui,
+                inputs=[llm_model_name, voice_actor, voice_style, admin_prompt, user_prompt],
+                outputs=[text_output, audio_output]
+            )
+
+            # Handle from submission button click
             submit_btn.click(
                 fn=self.create_output_to_ui,
                 inputs=[llm_model_name, voice_actor, voice_style, admin_prompt, user_prompt],

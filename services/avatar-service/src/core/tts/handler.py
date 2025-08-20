@@ -1,7 +1,7 @@
 from voicevox_core.blocking import Onnxruntime, OpenJtalk, Synthesizer, VoiceModelFile
 import os
 import json
-from utils import file_name_to_id
+from .utils import file_name_to_id, create_wav_file
 from config import config
 
 
@@ -139,12 +139,6 @@ class TextToSpeechHandler:
         wav = self.synthesizer.synthesis(self.audio_query, style_id=voice_style_id)
         self.audio_output = wav
 
-    def create_wav_file(self) -> None:
-        """Create a WAV file from the given audio data"""
-        if self.audio_output is not None:
-            with open(self.wav_output_path, "wb") as wav_file:
-                wav_file.write(self.audio_output)
-
     def get_voice_id_from_names(self, voice_actor_name: str, voice_style_name: str) -> tuple[int, int]:
         """
         Get style_id from voice actor and style names.
@@ -184,5 +178,8 @@ class TextToSpeechHandler:
             )
 
         # Output as wav for UI purpose for debugging
-        self.create_wav_file()
+        create_wav_file(
+            audio_output=self.audio_output, 
+            wav_output_path=self.wav_output_path
+            )
         print(f"Created WAV file at: {self.wav_output_path}")

@@ -6,7 +6,7 @@ from typing import Dict, Any
 class Config:
     """Configuration manager for the UI."""
 
-    def __init__(self, config_path: str = "config.yaml"):
+    def __init__(self, config_path: str = "./config/config.yaml"):
         self.config_path = Path(config_path)
         self._config = self._load_config()
 

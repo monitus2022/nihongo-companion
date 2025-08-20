@@ -1,7 +1,7 @@
-from text_to_speech import TextToSpeechHandler
-import gradio as gr
-from prompt_llm import prompt_llm
+from core.tts import TextToSpeechHandler
+from core.llm import prompt_llm
 from config import config
+import gradio as gr
 
 class ChatInterface:
     def __init__(self):

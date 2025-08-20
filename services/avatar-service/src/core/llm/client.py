@@ -1,6 +1,6 @@
-from schema import LlmRequestBody
-import requests
+from .schemas import LlmRequestBody 
 from config import config
+import requests
 
 def prompt_llm(
     user_prompt: str,

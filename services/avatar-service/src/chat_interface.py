@@ -33,7 +33,7 @@ class ChatInterface:
         )
 
         if llm_response:
-            self.tts.create_wav_from_prompt(
+            self.tts.create_wav_from_llm_response(
                 llm_response=llm_response,
                 voice_actor_name=voice_actor_name,
                 voice_style_name=voice_style_name,
@@ -94,7 +94,14 @@ class ChatInterface:
                 outputs=[voice_style]
             )
             
-            # Handle form submission
+            # Handle from pressing "enter" in User Prompt Box
+            user_prompt.submit(
+                fn=self.create_output_to_ui,
+                inputs=[llm_model_name, voice_actor, voice_style, admin_prompt, user_prompt],
+                outputs=[text_output, audio_output]
+            )
+
+            # Handle from submission button click
             submit_btn.click(
                 fn=self.create_output_to_ui,
                 inputs=[llm_model_name, voice_actor, voice_style, admin_prompt, user_prompt],

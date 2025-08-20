@@ -2,6 +2,7 @@ from voicevox_core.blocking import Onnxruntime, OpenJtalk, Synthesizer, VoiceMod
 import os
 import json
 from utils import file_name_to_id
+from config import config
 
 
 class TextToSpeechHandler:
@@ -12,12 +13,10 @@ class TextToSpeechHandler:
             load_voice_options (bool): Whether to load voice options during init
         """
         # Initialize VoiceVox components
-        self.onnxruntime_path = (
-            "./voicevox/python/onnxruntime/lib/libvoicevox_onnxruntime.so.1.17.3"
-        )
-        self.synthesizer_path = "./voicevox/python/dict/open_jtalk_dic_utf_8-1.11"
-        self.vvm_folder_path = "./voicevox/python/models/vvms"
-        self.wav_output_path = "output.wav"
+        self.onnxruntime_path = config.tts.get("onnxruntime_path")
+        self.synthesizer_path = config.tts.get("synthesizer_path")
+        self.vvm_folder_path = config.tts.get("vvm_folder_path")
+        self.wav_output_path = config.tts.get("wav_output_path")
 
         self.onnxruntime = Onnxruntime.load_once(filename=self.onnxruntime_path)
         self.synthesizer = Synthesizer(
@@ -34,16 +33,9 @@ class TextToSpeechHandler:
         self.create_voice_style_info()
 
     def list_styles(self, voice_model_id) -> list[dict[str, any]]:
-        """List available styles for the current voice model.
-        Meta example:
-        CharacterMeta(name='四国めたん',
-               styles=[StyleMeta(name='ノーマル', id=2, type='talk', order=0),
-                       StyleMeta(name='あまあま', id=0, type='talk', order=1),
-                       StyleMeta(name='ツンツン', id=6, type='talk', order=2),
-                       StyleMeta(name='セクシー', id=4, type='talk', order=3)],
-               speaker_uuid='7ffcb7ce-00ec-4bdc-82cd-45a8889e43ff',
-               version='0.1.0',
-               order=0)
+        """
+        List available styles for the current voice model.
+        Refer to schema.py for more details.
         """
         style_metas = self.synthesizer.metas()
         style_id_info = []

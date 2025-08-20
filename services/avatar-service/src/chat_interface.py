@@ -44,7 +44,10 @@ class ChatInterface:
         return self.actor_style_dict.get(actor_name, [])
 
     def create_interface(self):
-        with gr.Blocks(title=config.ui.get("title", "")) as app:
+        with gr.Blocks(
+            title=config.ui.get("title", ""),
+            theme=gr.themes.Ocean(),    # https://www.gradio.app/guides/theming-guide
+            ) as app:
             gr.Markdown(config.ui.get("header", ""))
             
             # Usage instructions paragraph
@@ -70,13 +73,25 @@ class ChatInterface:
                         choices=initial_styles,
                         value=initial_style
                     )
-                    admin_prompt = gr.Textbox(label="Admin Prompt (Optional)", placeholder="Optional admin guidance, will replace default prompt")
-                    user_prompt = gr.Textbox(label="User Prompt", value=config.prompts.get("default_user", ""), placeholder="Enter your prompt here")
-                    submit_btn = gr.Button("Generate Response & Audio", variant="primary")
+                    admin_prompt = gr.Textbox(
+                        label="Admin Prompt (Optional)", 
+                        placeholder="Optional admin guidance, will replace default prompt"
+                        )
+                    user_prompt = gr.Textbox(
+                        label="User Prompt", 
+                        value=config.prompts.get("default_user", ""), 
+                        placeholder="Enter your prompt here"
+                        )
+                    submit_btn = gr.Button(
+                        "Generate Response & Audio", 
+                        variant="primary"
+                        )
                 
                 # Right column: output
                 with gr.Column():
-                    text_output = gr.Textbox(label="Model Response")
+                    text_output = gr.Textbox(
+                        label="Model Response"
+                        )
                     audio_output = gr.Audio(
                         label="Generated Speech", 
                         type="filepath",

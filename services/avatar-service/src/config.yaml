@@ -2,29 +2,11 @@
 
 # LLM Configuration
 llm:
-  default_model: "gemma3"
+  default_model: gemma3
   server_url: "http://localhost:8000"
   endpoints:
     prompt: "/ollama/prompt"
     health_check: "/ollama"
-
-# UI Configuration
-ui:
-  title: "Nihongo Companion"
-  header: "# 🎌 Nihongo Companion - AI Japanese Tutor"
-  instruction: |
-            ## 📝 How to Use This Interface
-            
-            1. **Model Name**: Enter the AI model you want to use (default: gemma3)
-            2. **User Prompt**: Type your message or question in Japanese or English
-            3. **Admin Prompt**: (Optional) Provide context like "You are a Japanese tutor" to guide the AI's response
-            4. **Voice Actor & Style**: Choose the voice characteristics for the audio output
-            5. **Click Submit**: The AI will generate both text and audio responses automatically
-            
-            **Example**: Try asking "こんにちは、元気ですか？" (Hello, how are you?) with admin prompt "You are a friendly Japanese conversation partner."
-  theme: "default"
-  share: false
-  auto_launch: true
 
 # Default Prompts
 prompts:
@@ -35,3 +17,26 @@ prompts:
     No emoji (😊), emoticons (_), kaomoji (＞＜), or symbols except standard punctuation (。、「」). 
     Every answer must follow this rule.
   default_user: "こんにちは、元気ですか？"
+
+tts:
+  onnxruntime_path: "./voicevox/python/onnxruntime/lib/libvoicevox_onnxruntime.so.1.17.3"
+  synthesizer_path: "./voicevox/python/dict/open_jtalk_dic_utf_8-1.11"
+  vvm_folder_path: "./voicevox/python/models/vvms"
+  wav_output_path: "output.wav"
+
+# UI Configuration
+ui:
+  title: Nihongo Companion
+  header: "# 🎌 Nihongo Companion - AI Japanese Tutor"
+  instruction: |
+    ## 📝 How to Use This Interface
+
+    1. **Model Name**: Enter the AI model you want to use (default: gemma3)
+    2. **User Prompt**: Type your message or question in Japanese or English
+    3. **Admin Prompt**: (Optional) Provide context like "You are a Japanese tutor" to guide the AI's response
+    4. **Voice Actor & Style**: Choose the voice characteristics for the audio output
+    5. **Click Submit**: The AI will generate both text and audio responses automatically
+
+    **Example**: Try asking "こんにちは、元気ですか？" (Hello, how are you?) with admin prompt "You are a friendly Japanese conversation partner."
+  share: false
+  auto_launch: true

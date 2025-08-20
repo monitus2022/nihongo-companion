@@ -1,5 +1,6 @@
 from .schemas import LlmRequestBody 
 from config import config
+from utils import avatar_service_logger as logger
 import requests
 
 def prompt_llm(
@@ -15,19 +16,21 @@ def prompt_llm(
         ) + config.llm.get(
             "endpoints", {}
             ).get("prompt", "")
+        
     payload = LlmRequestBody(
         llm_model_name=llm_model_name,
         user_prompt=user_prompt,
         admin_prompt=admin_prompt,
         kwargs={}
     ).model_dump()
-    print(f"Sending request to LLM with payload: {payload}")
+    
+    logger.debug(f"Sending request to LLM with payload: {payload}")
     response = requests.post(request_url, json=payload)
     if response.status_code == 200:
         prompt_response = response.json().get("message")
-        print(f"Received response from LLM: {prompt_response}")
+        logger.info(f"Received response from LLM: {prompt_response}")
         return prompt_response
     else:
-        print("Error: Unable to get response from model")
+        logger.error("Error: Unable to get response from model")
         return None
     

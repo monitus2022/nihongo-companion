@@ -1,7 +1,7 @@
 from voicevox_core.blocking import Onnxruntime, OpenJtalk, Synthesizer, VoiceModelFile
 import os
 import json
-from .utils import file_name_to_id, create_wav_file
+from utils import avatar_service_logger as logger
 from config import config
 
 
@@ -22,8 +22,8 @@ class TextToSpeechHandler:
         self.synthesizer = Synthesizer(
             self.onnxruntime,
             OpenJtalk(self.synthesizer_path),
-            acceleration_mode="AUTO",
-            cpu_num_threads=4,
+            acceleration_mode=config.tts.get("acceleration_mode"),
+            cpu_num_threads=config.tts.get("cpu_num_threads")
         )
         self.voice_style_info = None
         self.audio_query = None
@@ -68,7 +68,6 @@ class TextToSpeechHandler:
         )
 
         # First pass: collect all voice data with IDs
-        print(f"Begin loading voice models...")
         for model_id in model_id_list:
             with VoiceModelFile.open(f"{self.vvm_folder_path}/{model_id}.vvm") as model:
                 self.synthesizer.load_voice_model(model)
@@ -85,7 +84,7 @@ class TextToSpeechHandler:
                                 "model_id": model_id,
                             }
                         )
-        print(f"✅ Loaded {len(model_id_list)} models")
+        logger.info(f"✅ Loaded {len(model_id_list)} voice models")
 
         # Second pass: organize by actor -> styles with all necessary IDs
         organized_voices = {}
@@ -171,7 +170,7 @@ class TextToSpeechHandler:
             return None
 
         # Generate audio output
-        print(f"Generating audio for text: {llm_response} with actor: {voice_actor_name}, style: {voice_style_name}")
+        logger.debug(f"Generating audio for text: {llm_response} with actor: {voice_actor_name}, style: {voice_style_name}")
         self.generate_audio_output_given_voice_ids(
             voice_style_id=style_id, 
             llm_response=llm_response
@@ -182,4 +181,14 @@ class TextToSpeechHandler:
             audio_output=self.audio_output, 
             wav_output_path=self.wav_output_path
             )
-        print(f"Created WAV file at: {self.wav_output_path}")
+        logger.info(f"Created WAV file at: {self.wav_output_path}")
+
+def file_name_to_id(filename: str) -> int:
+    """Extract the model ID from the filename."""
+    return int(filename.split('.')[0])
+
+def create_wav_file(audio_output, wav_output_path) -> None:
+    """Create a WAV file from the given audio data"""
+    with open(wav_output_path, "wb") as wav_file:
+        wav_file.write(audio_output)
+        

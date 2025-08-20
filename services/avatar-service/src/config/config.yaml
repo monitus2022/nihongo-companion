@@ -23,6 +23,8 @@ tts:
   synthesizer_path: "./voicevox/python/dict/open_jtalk_dic_utf_8-1.11"
   vvm_folder_path: "./voicevox/python/models/vvms"
   wav_output_path: "output.wav"
+  acceleration_mode: "AUTO"
+  cpu_num_threads: 4
 
 # UI Configuration
 ui:

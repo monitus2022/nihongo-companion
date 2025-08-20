@@ -21,7 +21,7 @@ class ChatInterface:
         user_prompt: str,
     ) -> tuple[str, str]:
         """
-        Gradio UI parameters
+        Gradio UI parameters, pass user input into related functions
         """
         print(f"Creating media output with actor: {voice_actor_name}, style: {voice_style_name}")
         if not admin_prompt:
@@ -31,7 +31,6 @@ class ChatInterface:
             admin_prompt=admin_prompt,
             llm_model_name=llm_model_name,
         )
-
         if llm_response:
             self.tts.create_wav_from_llm_response(
                 llm_response=llm_response,
@@ -44,6 +43,9 @@ class ChatInterface:
         return self.actor_style_dict.get(actor_name, [])
 
     def create_interface(self):
+        """
+        Create the Gradio interface for the chat application.
+        """
         with gr.Blocks(
             title=config.ui.get("title", ""),
             theme=gr.themes.Ocean(),    # https://www.gradio.app/guides/theming-guide
@@ -54,7 +56,7 @@ class ChatInterface:
             gr.Markdown(config.ui.get("instruction", ""))
 
             with gr.Row():
-                # Left column: input
+                # Left column: user input
                 with gr.Column():
                     llm_model_name = gr.Textbox(label="LLM Model Name", value="gemma3", placeholder="Enter model name")
 
@@ -87,7 +89,7 @@ class ChatInterface:
                         variant="primary"
                         )
                 
-                # Right column: output
+                # Right column: text and media output
                 with gr.Column():
                     text_output = gr.Textbox(
                         label="Model Response"

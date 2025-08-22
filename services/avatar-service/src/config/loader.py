@@ -35,5 +35,40 @@ class Config:
     def ui(self) -> Dict[str, Any]:
         return self._config.get("ui", {})
 
+    @property
+    def audio(self) -> Dict[str, Any]:
+        return self._config.get("audio", {})
+
+    @property
+    def sliding_window(self) -> Dict[str, Any]:
+        return self._config.get("sliding_window", {})
+
+    @property
+    def gui(self) -> Dict[str, Any]:
+        return self._config.get("gui", {})
+
+    @property
+    def avatar(self) -> Dict[str, Any]:
+        return self._config.get("avatar", {})
+
+    @property
+    def custom(self) -> Dict[str, Any]:
+        return self._config.get("custom", {})
+
+    @property
+    def transport(self) -> Dict[str, Any]:
+        return self._config.get("transport", {})
+
+    @property
+    def server(self) -> Dict[str, Any]:
+        return self._config.get("server", {})
+
+    @property
+    def model_paths(self) -> Dict[str, Any]:
+        return self._config.get("model_paths", {})
+
+    @property
+    def avatar_paths(self) -> Dict[str, Any]:
+        return self._config.get("avatar_paths", {})
 
 config = Config()

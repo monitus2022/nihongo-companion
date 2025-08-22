@@ -41,3 +41,49 @@ ui:
     **Example**: Try asking "こんにちは、元気ですか？" (Hello, how are you?) with admin prompt "You are a friendly Japanese conversation partner."
   share: false
   auto_launch: true
+
+# Imported from LiveTalking
+
+# Audio Settings
+audio:
+  fps: 50  # audio fps, must be 50
+  sample_rate: 16000  # audio sample rate
+
+# Sliding Window Settings (unit: 20ms)
+sliding_window:
+  left: 10   # -l parameter
+  middle: 8  # -m parameter  
+  right: 10  # -r parameter
+
+# GUI Settings
+gui:
+  width: 450   # GUI width
+  height: 450  # GUI height
+
+# Avatar Settings
+avatar:
+  id: "avator_1"  # define which avatar in data/avatars
+  batch_size: 16  # infer batch size
+
+# Custom Video Configuration
+custom:
+  video_config: ""  # path to custom action json file
+
+# Transport Settings
+transport:
+  type: "rtcpush"  # transport type: webrtc, rtcpush, virtualcam
+  push_url: "http://localhost:1985/rtc/v1/whip/?app=live&stream=livestream"
+
+# Server Settings
+server:
+  max_sessions: 1      # maximum concurrent sessions
+  listen_port: 8010    # web server listen port
+  host: "0.0.0.0"      # server host address
+
+# Model Paths
+model_paths:
+  wav2lip: "./models/wav2lip.pth"
+
+# Avatar Paths
+avatar_paths:
+  base_dir: "./data/avatars"

@@ -1,7 +1,23 @@
+# UI
 gradio==5.39.0
-fastapi==0.116.0
 uvicorn==0.35.0
+
+# API
+fastapi==0.116.0
 requests==2.32.4
+
+# Config
 pydantic==2.11.7
 PyYAML==6.0.1
+
+# tts
 https://github.com/VOICEVOX/voicevox_core/releases/download/0.16.0/voicevox_core-0.16.0-cp310-abi3-manylinux_2_34_x86_64.whl # voicevox wheel
+soundfile==0.13.1
+resampy==0.4.3
+
+# Lipsync
+torch==2.5.0+cu124
+torchvision==0.20.0+cu124
+torchaudio==2.5.0+cu124
+# Add --extra-index-url https://download.pytorch.org/whl/cu124 with pip install
+librosa==0.11.0

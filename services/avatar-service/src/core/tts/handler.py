@@ -169,6 +169,7 @@ class TextToSpeechHandler:
     ) -> None:
         """
         Create a WAV file from the given llm response using the specified voice actor and style.
+        TODO: To be replaced by audio byte streaming directly to UI
         """
         # Find style id based on names
         style_id = self.get_voice_id_from_names(voice_actor_name, voice_style_name)
